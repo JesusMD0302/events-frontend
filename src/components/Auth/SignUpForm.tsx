@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-export default function SignInForm() {
+export default function SignUpForm() {
   return (
     <Box component="form">
       <Card>
@@ -48,8 +48,8 @@ export default function SignInForm() {
                 }}
               >
                 <Image
-                  src="/signin.svg"
-                  alt="Sigin image"
+                  src="/signup.svg"
+                  alt="Sigup image"
                   width={208}
                   height={225}
                   style={{ width: "100%", height: "100%" }}
@@ -65,7 +65,7 @@ export default function SignInForm() {
                   align="center"
                   color={(theme) => theme.palette.primary.main}
                 >
-                  Iniciar sesión
+                  Registrate
                 </Typography>
 
                 <Typography
@@ -73,7 +73,7 @@ export default function SignInForm() {
                   color={(theme) => theme.palette.primary.light}
                   align="center"
                 >
-                  Ingresa tu correo electrónico y contraseña
+                  Registra tu cuenta para acceder a todos los beneficios
                 </Typography>
               </Box>
               <Box component="section" mt={4}>
@@ -98,11 +98,11 @@ export default function SignInForm() {
                   variant="contained"
                   sx={{ marginTop: 2 }}
                 >
-                  Iniciar sesión
+                  Crear cuenta
                 </Button>
-                <Link href="/auth/signup" passHref>
+                <Link href="/auth/signin" passHref>
                   <Button variant="text" fullWidth sx={{ marginTop: 2 }}>
-                    Crea una cuenta
+                    ¿Ya tienes una cuenta? Inicia sesión
                   </Button>
                 </Link>
               </Box>

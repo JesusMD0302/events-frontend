@@ -1,8 +1,9 @@
 import { EventLocation } from "@/types/event";
-import { Box } from "@mui/material";
+import { Box, SxProps, Theme } from "@mui/material";
 
 interface EventMapProps {
   location: EventLocation;
+  sx: SxProps<Theme>;
 }
 
 export default function EventMap() {

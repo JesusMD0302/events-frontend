@@ -1,6 +1,6 @@
 type EventStatus = "active" | "inactive" | "canceled" | "concluded";
 
-type EventLocation = {
+export type EventLocation = {
   type: string;
   coordinates: number[];
 };

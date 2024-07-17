@@ -65,6 +65,7 @@ export default function EventInfo() {
       <Box
         component="section"
         mt={4}
+        gap={4}
         display="grid"
         gridTemplateColumns="2fr 1fr"
       >
@@ -91,7 +92,7 @@ export default function EventInfo() {
               <Place />
               123 Main St, San Francisco, CA 94101
             </Typography>
-            <EventMap />
+            <EventMap customWidth="100%" customHeight="400px" />
           </Box>
         </Box>
         <Box component="section">

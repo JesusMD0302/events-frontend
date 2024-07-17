@@ -10,12 +10,16 @@ import interactionPlugin from "@fullcalendar/interaction";
 export default function EventsCalendar() {
   const router = useRouter();
 
+  const handleSelectDate = (date: string) => {
+    router.push(`/app/create/event?date=${date}`);
+  };
+
   const handleSelectEvent = (event: { id: number }) => {
     router.push(`/app/events/${event.id}`);
   };
 
   return (
-    <Box component="section" height="100%">
+    <Box component="section" height="100%" mt={2}>
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -23,7 +27,7 @@ export default function EventsCalendar() {
         height={"auto"}
         aspectRatio={1.3}
         dateClick={(arg) => {
-          alert(arg.dateStr);
+          handleSelectDate(arg.dateStr);
         }}
         eventClick={(arg) => {
           handleSelectEvent(arg.event as any);

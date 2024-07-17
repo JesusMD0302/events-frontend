@@ -2,17 +2,24 @@ import { EventLocation } from "@/types/event";
 import { Box, SxProps, Theme } from "@mui/material";
 
 interface EventMapProps {
-  location: EventLocation;
-  sx: SxProps<Theme>;
+  location?: EventLocation;
+  sx?: SxProps<Theme>;
+  customWidth?: number | string;
+  customHeight?: number | string;
 }
 
-export default function EventMap() {
+export default function EventMap({
+  location,
+  sx,
+  customWidth,
+  customHeight,
+}: EventMapProps) {
   return (
     <Box
       component="section"
       sx={{
-        width: { sm: "100%", md: "190px" },
-        height: { xs: "200px" },
+        width: customWidth ?? { sm: "100%", md: "190px" },
+        height: customHeight ?? { xs: "200px", md: "100%" },
       }}
     >
       <iframe

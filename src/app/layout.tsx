@@ -3,6 +3,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./theme";
+import Providers from "./providers";
 
 export const metadata: Metadata = {
   title: "Event Management App",
@@ -17,10 +18,12 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body>
-        <AppRouterCacheProvider options={{ key: "css" }}>
-          <CssBaseline />
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-        </AppRouterCacheProvider>
+        <Providers>
+          <AppRouterCacheProvider options={{ key: "css" }}>
+            <CssBaseline />
+            <ThemeProvider theme={theme}>{children}</ThemeProvider>
+          </AppRouterCacheProvider>
+        </Providers>
       </body>
     </html>
   );

@@ -1,12 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import EventCard from "./EventCard";
 import { EventApp } from "@/types/event";
+import { cloneElement, ReactElement } from "react";
 
 interface EventsContainerProps {
   events: EventApp[];
+  children: ReactElement | ReactElement[];
 }
 
-export default function EventsContainer({ events }: EventsContainerProps) {
+export default function EventsContainer({
+  events,
+  children,
+}: EventsContainerProps) {
   return (
     <Box
       component="section"
@@ -31,8 +36,7 @@ export default function EventsContainer({ events }: EventsContainerProps) {
         </Typography>
       )}
 
-      {events.length > 0 &&
-        events.map((event, index) => <EventCard key={index} />)}
+      {events.length > 0 && children}
     </Box>
   );
 }

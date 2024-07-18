@@ -3,7 +3,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import api from "@/lib/api";
 import { AxiosError } from "axios";
 
+const SECRET = process.env.NEXTAUTH_SECRET;
+
 export const authOptions: NextAuthOptions = {
+  secret: SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -54,6 +57,13 @@ export const authOptions: NextAuthOptions = {
       session.user = token.user as any;
 
       return session;
+    },
+    async redirect({ url, baseUrl }) {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
 };

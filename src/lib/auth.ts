@@ -25,7 +25,7 @@ export const authOptions: NextAuthOptions = {
             password: credentials?.password ?? "",
           };
 
-          const res = await api.post("/login", newCredentials);
+          const res = await api.post("/user/signin", newCredentials);
           const user = res.data;
 
           return user;

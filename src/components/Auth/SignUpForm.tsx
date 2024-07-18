@@ -32,9 +32,6 @@ const signUpValidationSchema = Yup.object({
 export default function SignUpForm() {
   const api = useAxios();
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const formik = useFormik({
     initialValues: {

@@ -16,7 +16,7 @@ import { useFormik } from "formik";
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as Yup from "yup";
 
 const signUpValidationSchema = Yup.object({

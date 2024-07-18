@@ -1,3 +1,4 @@
+import EventCard from "@/components/Event/EventCard";
 import EventsContainer from "@/components/Event/EventsContainer";
 import api from "@/lib/api";
 import { authOptions } from "@/lib/auth";
@@ -32,7 +33,11 @@ export default async function Home() {
       <Typography component="h1" variant="h4">
         Eventos cercanos
       </Typography>
-      <EventsContainer events={events} />
+      <EventsContainer events={events}>
+        {events.map((eventApp, index) => (
+          <EventCard key={index} />
+        ))}
+      </EventsContainer>
     </Box>
   );
 }

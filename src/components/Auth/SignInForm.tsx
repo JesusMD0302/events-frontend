@@ -5,17 +5,67 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
+  CircularProgress,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import useAxios from "@/hooks/useAxios";
+import { AxiosError } from "axios";
+import { useFormik } from "formik";
+import { signIn } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import * as Yup from "yup";
+
+const signInValidationSchema = Yup.object({
+  email: Yup.string()
+    .email("El correo electrónico no es válido")
+    .required("El correo electrónico es requerido"),
+  password: Yup.string()
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .required("La contraseña es requerida"),
+});
 
 export default function SignInForm() {
+  const api = useAxios();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const callbackUrl = searchParams.get("callbackUrl") || "/app";
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: signInValidationSchema,
+    onSubmit: async (values, helpers) => {
+      try {
+        const result = await signIn("credentials", {
+          redirect: false,
+          email: values.email,
+          password: values.password,
+        });
+
+        if (result?.error && result.status === 401) {
+          helpers.setStatus("Credenciales inválidas");
+        } else {
+          router.push(callbackUrl);
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 400) {
+            helpers.setStatus(error.response.data.message);
+          }
+        }
+      }
+    },
+  });
+
   return (
-    <Box component="form">
+    <Box component="form" onSubmit={formik.handleSubmit}>
       <Card>
         <CardContent sx={{ padding: 0, ":last-child": { paddingBottom: 0 } }}>
           <Stack
@@ -80,12 +130,30 @@ export default function SignInForm() {
                 <Stack spacing={2}>
                   <TextField
                     label="Correo electrónico"
+                    id="email"
+                    name="email"
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
                     fullWidth
                     margin="normal"
                     autoComplete="off"
                   />
                   <TextField
                     label="Contraseña"
+                    id="password"
+                    name="password"
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={
+                      formik.touched.password && Boolean(formik.errors.password)
+                    }
+                    helperText={
+                      formik.touched.password && formik.errors.password
+                    }
                     fullWidth
                     margin="normal"
                     type="password"
@@ -97,6 +165,12 @@ export default function SignInForm() {
                   fullWidth
                   variant="contained"
                   sx={{ marginTop: 2 }}
+                  disabled={formik.isSubmitting}
+                  startIcon={
+                    formik.isSubmitting && (
+                      <CircularProgress size={16} color="inherit" />
+                    )
+                  }
                 >
                   Iniciar sesión
                 </Button>

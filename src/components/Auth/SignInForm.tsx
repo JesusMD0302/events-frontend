@@ -52,14 +52,11 @@ export default function SignInForm() {
         if (result?.error && result.status === 401) {
           helpers.setStatus("Credenciales inválidas");
         } else {
+          helpers.setStatus("");
           router.push(callbackUrl);
         }
       } catch (error) {
-        if (error instanceof AxiosError) {
-          if (error.response?.status === 400) {
-            helpers.setStatus(error.response.data.message);
-          }
-        }
+        console.error(error);
       }
     },
   });
@@ -70,7 +67,7 @@ export default function SignInForm() {
         <CardContent sx={{ padding: 0, ":last-child": { paddingBottom: 0 } }}>
           <Stack
             display="grid"
-            gridTemplateColumns="1fr 1fr"
+            gridTemplateColumns={{ xs: "1fr", md: "1fr 1fr" }}
             gap={4}
             width="100%"
             maxWidth="1000px"
@@ -83,7 +80,7 @@ export default function SignInForm() {
               sx={{
                 backgroundColor: (theme) => theme.palette.primary.light,
                 padding: 4,
-                display: "flex",
+                display: { xs: "none", md: "flex" },
                 alignItems: "center",
                 justifyContent: "center",
               }}
@@ -159,6 +156,9 @@ export default function SignInForm() {
                     type="password"
                   />
                 </Stack>
+                <Typography color="error" align="center">
+                  {formik.status}
+                </Typography>
                 <Button
                   type="submit"
                   color="primary"

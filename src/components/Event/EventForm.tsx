@@ -13,12 +13,13 @@ import {
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { MuiChipsInput } from "mui-chips-input";
-import { useSearchParams } from "next/navigation";
-import { ChangeEvent, useCallback, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ChangeEvent } from "react";
 import EventMap from "./EventMap";
 import { useSession } from "next-auth/react";
 import useAxios from "@/hooks/useAxios";
 import useGeocode from "@/hooks/useGeocode";
+import { AxiosError } from "axios";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_MAPS_API_KEY ?? "";
 
@@ -43,15 +44,15 @@ const validationEventSchema = Yup.object({
     .required("Ingresa la ubicación del evento"),
 });
 
-export default function CreateEventForm() {
+export default function EventForm() {
+  const [address, getGeocode] = useGeocode();
+  const router = useRouter();
   const searchParams = useSearchParams();
 
   const initDate = searchParams.get("date") || "";
 
   const { data } = useSession();
   const api = useAxios();
-
-  const [address, getGeocode] = useGeocode();
 
   const formik = useFormik({
     initialValues: {
@@ -65,19 +66,27 @@ export default function CreateEventForm() {
       location: null,
     },
     validationSchema: validationEventSchema,
-    onSubmit: (values) => {
-      const { time, isFree, ...cleanedValues } = values;
+    onSubmit: async (values, helpers) => {
+      const { time, isFree, cost, ...cleanedValues } = values;
 
       const newValues = {
         author: data?.user?.user.id,
+        cost: isFree ? 0 : cost,
         ...cleanedValues,
         date_time: new Date(`${values.date}T${values.time}`).toISOString(),
       };
 
       try {
-        api.post("/events/createEvent", newValues);
+        const res = await api.post("/events/createEvent", newValues);
+        window.location.href = `/app/`;
       } catch (error) {
-        console.error(error);
+        if (error instanceof AxiosError) {
+          if (error.response?.status === 400) {
+            helpers.setStatus(
+              "Error al crear el evento, asegúrate de que los datos sean correctos"
+            );
+          }
+        }
       }
     },
   });
@@ -101,7 +110,15 @@ export default function CreateEventForm() {
 
   return (
     <Box component="form" mt={2} onSubmit={formik.handleSubmit}>
-      <Box component="section" display="flex" flexDirection="column" gap={2}>
+      <Typography color="error">{formik.status}</Typography>
+
+      <Box
+        component="section"
+        display="flex"
+        flexDirection="column"
+        gap={2}
+        mt={2}
+      >
         <TextField
           label="Nombre"
           id="name"

@@ -35,7 +35,7 @@ export default async function UserEvents() {
       </Typography>
       <EventsContainer events={events}>
         {events.map((eventApp, index) => (
-          <EventCard key={index} />
+          <EventCard key={index} event={eventApp} />
         ))}
       </EventsContainer>
     </Box>

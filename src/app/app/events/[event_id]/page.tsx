@@ -1,5 +1,9 @@
+import EventAddress from "@/components/Event/EventAddress";
 import EventMap from "@/components/Event/EventMap";
 import EventStatus from "@/components/Event/EventStatus";
+import api from "@/lib/api";
+import { authOptions } from "@/lib/auth";
+import { EventApp } from "@/types/event";
 import {
   ConfirmationNumberOutlined,
   Person,
@@ -18,13 +22,75 @@ import {
   ListItemText,
   Typography,
 } from "@mui/material";
+import { AxiosError } from "axios";
+import { getServerSession, Session } from "next-auth";
+import { notFound } from "next/navigation";
 
-export default function EventInfo() {
+export default async function EventInfo({
+  params,
+}: {
+  params: { event_id: string };
+}) {
+  const session = await getServerSession(authOptions);
+  const { user } = session as Session;
+  const token = user.token;
+
+  if (!token) {
+    return { redirect: { destination: "/auth/signin", permanent: false } };
+  }
+
+  let event: EventApp = {
+    _id: "",
+    name: "",
+    date_time: "",
+    description: "",
+    location: {
+      coordinates: [0, 0],
+      type: "Point",
+    },
+    attender: [],
+    cost: 0,
+    guests: [],
+    author: {
+      _id: "",
+      username: "",
+    },
+    status: "active",
+  };
+  try {
+    const res = await api.get(`/events/getEventById/${params.event_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    event = res.data;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      if (error.response?.status === 400) {
+        return notFound();
+      }
+    }
+  }
+
+  const eventStatus =
+    event.status === "active"
+      ? "Próximo evento"
+      : event.status === "canceled"
+      ? "Evento cancelado"
+      : event.status === "concluded"
+      ? "Evento concluido"
+      : event.status === "inactive"
+      ? "Evento inactivo"
+      : event.status;
+
+  const eventCost = event.cost === 0 ? "Gratis" : `$${event.cost}`;
+
   return (
     <Box component="section">
       <Box component="header">
         <Box component="section" display="flex" alignItems="center" gap={2}>
-          <EventStatus />
+          <EventStatus content={eventStatus} />
           <Typography
             component="p"
             variant="caption"
@@ -33,12 +99,23 @@ export default function EventInfo() {
             gap={1}
             alignItems="center"
           >
-            <Typography component="span">01/01/2022</Typography> {" - "}
-            <Typography component="span">02:32 pm</Typography>
+            <Typography component="span" color="textSecondary">
+              {new Date(event.date_time).toLocaleDateString()}
+            </Typography>
+            {" - "}
+            <Typography component="span" color="textSecondary">
+              {new Date(event.date_time)
+                .toLocaleTimeString([], {
+                  hour: "numeric",
+                  minute: "numeric",
+                  hour12: true,
+                })
+                .replace(". ", ".")}
+            </Typography>
           </Typography>
         </Box>
         <Typography component="h1" variant="h4" fontWeight={700}>
-          Evento
+          {event.name}
         </Typography>
         <Box component="section" display="flex" alignItems="center" gap={4}>
           <Typography
@@ -48,7 +125,7 @@ export default function EventInfo() {
             gap={1}
             alignItems="center"
           >
-            <ConfirmationNumberOutlined /> Free
+            <ConfirmationNumberOutlined /> {eventCost}
           </Typography>
           <Typography
             component="p"
@@ -58,7 +135,7 @@ export default function EventInfo() {
             alignItems="center"
           >
             <PersonOutlineOutlined />
-            Organizado por {"Jong Doe"}
+            Organizado por {event.author.username}
           </Typography>
         </Box>
       </Box>
@@ -71,14 +148,7 @@ export default function EventInfo() {
       >
         <Box component="section">
           <Typography component="p">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloribus
-            eius rem perferendis optio dolorum placeat qui ex deserunt tempore
-            voluptates quia, accusamus neque recusandae dolor nulla. Illum dolor
-            quasi voluptate, amet architecto vitae nisi. Similique sapiente
-            soluta, vero eveniet sed eligendi nulla repellat atque temporibus
-            nisi, praesentium adipisci natus ipsa animi mollitia minima
-            provident. Eaque quod, eius minima illo sed amet commodi illum!
-            Veritatis!
+            {event.description || "No hay descripción disponible."}
           </Typography>
           <Box component="section" mt={4}>
             <Typography
@@ -90,24 +160,63 @@ export default function EventInfo() {
               mb={2}
             >
               <Place />
-              123 Main St, San Francisco, CA 94101
+              <EventAddress location={event.location} />
             </Typography>
-            <EventMap customWidth="100%" customHeight="400px" />
+            <EventMap
+              customWidth="100%"
+              customHeight="400px"
+              location={event.location}
+              customZoom={20}
+            />
           </Box>
         </Box>
         <Box component="section">
           <Card>
-            <CardHeader title="Invitados registrados" />
+            <CardHeader
+              title={
+                <Typography variant="h5" component="h2" fontWeight={500}>
+                  Invitados Especiales
+                </Typography>
+              }
+            />
             <CardContent>
               <List>
-                {[1, 2, 3, 4, 5].map((listItem) => (
-                  <ListItem key={listItem}>
+                {event.guests.map((guest) => (
+                  <ListItem key={guest}>
                     <ListItemAvatar>
                       <Avatar>
                         <Person />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary="Jane Doe" />
+                    <ListItemText primary={guest} />
+                  </ListItem>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
+          <Card sx={{ mt: 2 }}>
+            <CardHeader
+              title={
+                <Typography variant="h5" component="h2" fontWeight={500}>
+                  Asistentes Confirmados
+                </Typography>
+              }
+            />
+            <CardContent>
+              <List>
+                {event.attender.length === 0 && (
+                  <ListItem>
+                    <ListItemText primary="No hay asistentes confirmados" />
+                  </ListItem>
+                )}
+                {event.attender.map((guest) => (
+                  <ListItem key={guest}>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <Person />
+                      </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary={guest} />
                   </ListItem>
                 ))}
               </List>

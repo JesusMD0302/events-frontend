@@ -5,8 +5,14 @@ export type EventLocation = {
   coordinates: number[];
 };
 
+type EventAuthor = {
+  _id: string;
+  username: string;
+};
+
 export type EventApp = {
-  author: string;
+  _id: string;
+  author: EventAuthor;
   name: string;
   date_time: string;
   description: string;
@@ -14,5 +20,5 @@ export type EventApp = {
   cost: number;
   location: EventLocation;
   status: EventStatus;
-  attender: string;
+  attender: string[];
 };

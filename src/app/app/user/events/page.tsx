@@ -30,12 +30,12 @@ export default async function UserEvents() {
 
   return (
     <Box component="main">
-      <Typography component="h1" variant="h4">
+      <Typography component="h1" variant="h4" fontWeight={700}>
         Mis eventos
       </Typography>
       <EventsContainer events={events}>
         {events.map((eventApp, index) => (
-          <EventCard key={index} event={eventApp} />
+          <EventCard key={index} event={eventApp} statusEditable />
         ))}
       </EventsContainer>
     </Box>

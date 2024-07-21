@@ -30,7 +30,7 @@ export default async function Home() {
 
   return (
     <Box component="section">
-      <Typography component="h1" variant="h4">
+      <Typography component="h1" variant="h4" fontWeight={700}>
         Eventos cercanos
       </Typography>
       <EventsContainer events={events}>

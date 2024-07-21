@@ -9,8 +9,9 @@ export default function useAxios() {
     // Interceptor to add Authorization header
     const requestInterceptor = api.interceptors.request.use(
       (config) => {
-        if ((data as any)?.accessToken) {
-          config.headers.Authorization = `Bearer ${(data as any).accessToken}`;
+        if ((data as any)?.user.token) {
+          console.log("Adding token to request");
+          config.headers.Authorization = `Bearer ${(data as any).user.token}`;
         }
         return config;
       },

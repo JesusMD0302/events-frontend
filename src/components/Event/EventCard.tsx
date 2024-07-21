@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Card,
-  CardActionArea,
   CardContent,
   CardMedia,
   Typography,
@@ -12,14 +11,16 @@ import {
 import EventMap from "./EventMap";
 import { EventApp } from "@/types/event";
 import Link from "next/link";
+import EditEventStatusOption from "./EditEventStatusOption";
 
 type EventOmited = Omit<EventApp, "guests" | "cost" | "attender">;
 
 interface EventCardProps {
   event: EventOmited;
+  statusEditable?: boolean;
 }
 
-export default function EventCard({ event }: EventCardProps) {
+export default function EventCard({ event, statusEditable }: EventCardProps) {
   return (
     <Card
       // elevation={3}
@@ -32,20 +33,32 @@ export default function EventCard({ event }: EventCardProps) {
     >
       <CardContent>
         <Box component="header" width={{ md: "170px" }}>
-          <Typography
-            variant="subtitle1"
-            component="h3"
+          <Box
+            component="section"
             display="flex"
-            fontWeight={400}
-            gap={1}
-            alignItems="center"
+            justifyContent="space-between"
           >
-            <Avatar
-              sx={{ width: 24, height: 24 }}
-              title={event.author.username}
-            />
-            {event.author.username}
-          </Typography>
+            <Typography
+              variant="subtitle1"
+              component="h3"
+              display="flex"
+              fontWeight={400}
+              gap={1}
+              alignItems="center"
+            >
+              <Avatar
+                sx={{ width: 24, height: 24 }}
+                title={event.author.username}
+              />
+              {event.author.username}
+            </Typography>
+            {statusEditable && (
+              <EditEventStatusOption
+                event_id={event._id}
+                currentStatus={event.status}
+              />
+            )}
+          </Box>
           <Typography variant="h5" component="h2" mt={2}>
             {event.name}
           </Typography>
@@ -92,6 +105,7 @@ export default function EventCard({ event }: EventCardProps) {
           customWidth="100%"
           customZoom={17}
           disableDoubleClickZoom
+          scrollwheel={false}
         />
       </CardMedia>
     </Card>

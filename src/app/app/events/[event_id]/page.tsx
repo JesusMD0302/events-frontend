@@ -1,3 +1,4 @@
+import AddAttender from "@/components/Event/AddAttender";
 import EventAddress from "@/components/Event/EventAddress";
 import EventMap from "@/components/Event/EventMap";
 import EventStatus from "@/components/Event/EventStatus";
@@ -13,7 +14,9 @@ import {
 import {
   Avatar,
   Box,
+  Button,
   Card,
+  CardActions,
   CardContent,
   CardHeader,
   List,
@@ -33,6 +36,7 @@ export default async function EventInfo({
 }) {
   const session = await getServerSession(authOptions);
   const { user } = session as Session;
+  const user_id = user.user.id;
   const token = user.token;
 
   if (!token) {
@@ -221,6 +225,15 @@ export default async function EventInfo({
                 ))}
               </List>
             </CardContent>
+            <CardActions>
+              {event.attender.includes(user_id) ? (
+                <Button variant="contained" disabled fullWidth>
+                  Ya estas apuntado
+                </Button>
+              ) : (
+                <AddAttender event_id={event._id} user_id={user_id} />
+              )}
+            </CardActions>
           </Card>
         </Box>
       </Box>

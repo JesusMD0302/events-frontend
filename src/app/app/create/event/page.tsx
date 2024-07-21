@@ -1,4 +1,4 @@
-import CreateEventForm from "@/components/Event/CreateEventForm";
+import EventForm from "@/components/Event/EventForm";
 import { Box, Typography } from "@mui/material";
 
 export default function CreateEvent() {
@@ -7,7 +7,7 @@ export default function CreateEvent() {
       <Typography component="h1" variant="h4" fontWeight={700}>
         Crear Evento
       </Typography>
-      <CreateEventForm />
+      <EventForm />
     </Box>
   );
 }

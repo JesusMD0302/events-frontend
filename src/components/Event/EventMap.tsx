@@ -13,6 +13,7 @@ interface EventMapProps {
   customHeight?: number | string;
   customZoom?: number;
   disableDoubleClickZoom?: boolean;
+  scrollwheel?: boolean;
   onChange?: (lat: number, lng: number) => void;
 }
 
@@ -23,6 +24,7 @@ export default function EventMap({
   customHeight,
   customZoom,
   disableDoubleClickZoom,
+  scrollwheel = true,
   onChange,
 }: EventMapProps) {
   const [locationCoords, setLocationCoords] = useState<EventLocation | null>(
@@ -74,6 +76,7 @@ export default function EventMap({
           gestureHandling={"greedy"}
           disableDefaultUI={true}
           disableDoubleClickZoom={disableDoubleClickZoom}
+          scrollwheel={scrollwheel}
         >
           <Marker
             position={{

@@ -2,7 +2,11 @@
 
 import { Typography } from "@mui/material";
 
-export default function EventStatus() {
+interface EventStatusProps {
+  content: string;
+}
+
+export default function EventStatus({ content }: EventStatusProps) {
   return (
     <Typography
       component="span"
@@ -14,7 +18,7 @@ export default function EventStatus() {
         borderRadius: (theme) => theme.shape.borderRadius,
       }}
     >
-      Próximo evento
+      {content}
     </Typography>
   );
 }

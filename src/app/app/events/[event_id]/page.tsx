@@ -185,6 +185,11 @@ export default async function EventInfo({
             />
             <CardContent>
               <List>
+                {event.guests.length === 0 && (
+                  <ListItem>
+                    <ListItemText primary="No hay invitados registrados" />
+                  </ListItem>
+                )}
                 {event.guests.map((guest) => (
                   <ListItem key={guest}>
                     <ListItemAvatar>
@@ -214,19 +219,19 @@ export default async function EventInfo({
                   </ListItem>
                 )}
                 {event.attender.map((guest) => (
-                  <ListItem key={guest}>
+                  <ListItem key={guest._id}>
                     <ListItemAvatar>
                       <Avatar>
                         <Person />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary={guest} />
+                    <ListItemText primary={guest.username} />
                   </ListItem>
                 ))}
               </List>
             </CardContent>
             <CardActions>
-              {event.attender.includes(user_id) ? (
+              {event.attender.find((attender) => attender._id === user_id) ? (
                 <Button variant="contained" disabled fullWidth>
                   Ya estas apuntado
                 </Button>

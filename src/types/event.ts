@@ -10,6 +10,11 @@ type EventAuthor = {
   username: string;
 };
 
+type EventAttender = {
+  _id: string;
+  username: string;
+};
+
 export type EventApp = {
   _id: string;
   author: EventAuthor;
@@ -20,5 +25,5 @@ export type EventApp = {
   cost: number;
   location: EventLocation;
   status: EventStatus;
-  attender: string[];
+  attender: EventAttender[];
 };

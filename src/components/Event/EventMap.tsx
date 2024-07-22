@@ -14,6 +14,7 @@ interface EventMapProps {
   customZoom?: number;
   disableDoubleClickZoom?: boolean;
   scrollwheel?: boolean;
+  disableGestureHandling?: boolean;
   onChange?: (lat: number, lng: number) => void;
 }
 
@@ -23,8 +24,9 @@ export default function EventMap({
   customWidth,
   customHeight,
   customZoom,
-  disableDoubleClickZoom,
+  disableDoubleClickZoom = false,
   scrollwheel = true,
+  disableGestureHandling = false,
   onChange,
 }: EventMapProps) {
   const [locationCoords, setLocationCoords] = useState<EventLocation | null>(
@@ -73,7 +75,7 @@ export default function EventMap({
           }}
           defaultZoom={customZoom ?? 11.5}
           onClick={onChange && handleMapClick}
-          gestureHandling={"greedy"}
+          gestureHandling={disableGestureHandling ? "none" : "greedy"}
           disableDefaultUI={true}
           disableDoubleClickZoom={disableDoubleClickZoom}
           scrollwheel={scrollwheel}

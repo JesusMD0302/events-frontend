@@ -10,7 +10,6 @@ export default function useAxios() {
     const requestInterceptor = api.interceptors.request.use(
       (config) => {
         if ((data as any)?.user.token) {
-          console.log("Adding token to request");
           config.headers.Authorization = `Bearer ${(data as any).user.token}`;
         }
         return config;

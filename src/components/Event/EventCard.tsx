@@ -106,6 +106,7 @@ export default function EventCard({ event, statusEditable }: EventCardProps) {
           customZoom={17}
           disableDoubleClickZoom
           scrollwheel={false}
+          disableGestureHandling
         />
       </CardMedia>
     </Card>
